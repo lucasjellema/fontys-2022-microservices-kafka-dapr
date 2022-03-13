@@ -9,7 +9,9 @@
     - [Asynchronous in Node](#asynchronous-in-node)
     - [Handle HTTP Request with Node](#handle-http-request-with-node)
   - [Node and Dapr](#node-and-dapr)
+    - [A second application](#a-second-application)
   - [Node and Dapr - Pub/Sub for Asynchronous Communications](#node-and-dapr---pubsub-for-asynchronous-communications)
+    - [Publishing from Node](#publishing-from-node)
   - [Leverage Dapr Pub/Sub between Front App and Node App](#leverage-dapr-pubsub-between-front-app-and-node-app)
   - [Telemetry, Traces and Dependencies](#telemetry-traces-and-dependencies)
   - [Resources](#resources-1)
@@ -365,7 +367,7 @@ Note: normally, frontapp would have its sidecar make the call to the nodeapp Dap
 
 This diagram visualizes the situation with the two applications and their sidecars.
 
-<DIAGRAM slide 50>
+![](images/front-app-nodeapp-statestore-sidecars.png)
 
 Start the *frontapp* using these commands:
 ```
@@ -445,6 +447,9 @@ dapr run --app-id order-processor --app-port $APP_PORT --dapr-http-port $DAPR_HT
 
 Check the logging to find that the application is listening on HTTP port 6002 to receive any messages that the Dapr sidecar (the personal assistant to the application) may pick up based on the topic subscription.
 
+This diagram visualizes the current situation:
+![](images/consumer-subscribed-to-topic.png)
+
 To publish a message to the *orders* topic in the default *pubsub* component, run this CLI command:
 ```
 dapr publish --publish-app-id order-processor --pubsub pubsub --topic orders --data '{"orderId": "100"}' 
@@ -465,6 +470,9 @@ export DAPR_HTTP_PORT=3601
 dapr run --app-id orderprocessing --app-port $APP_PORT --dapr-http-port $DAPR_HTTP_PORT node publisher.js 
 ```
 The publisher application is started and publishes all it has to say - to its Dapr Sidecar. This loyal assistant publishes the messages onwards, to what we know is the Redis Pub/Sub implementation.
+
+This diagram puts it into a picture:
+![](images/pub-and-sub-from-node.png)
 
 These messages are consumed by the *consumer* app's Sidecar because of its subscription on the *orders* topic. For each message, a call is made to the handler function. 
 
@@ -522,7 +530,8 @@ curl localhost:6030?name=Jonathan
 curl localhost:6030?name=Jonathan
 curl localhost:6030?name=Jonathan
 ```
-You will notice that the number of occurrences of the name is not increasing. The reason: the *frontapp* cannot write to the state store and the application that should consume the messages from the pubsub's topic is not yet running and therefore not yet updating the state store.   
+You will notice that the number of occurrences of the name is not increasing. The reason: the *frontapp* cannot write to the state store and the application that should consume the messages from the pubsub's topic is not yet running and therefore not yet updating the state store. Here is an overview of the situation right now:
+![](images/front-app-publisher.png)  
 
 So let's run this *name-processor* using these statements:
  
@@ -532,7 +541,12 @@ export SERVER_PORT=6032
 export DAPR_HTTP_PORT=3631
 dapr run --app-id name-processor --app-port $APP_PORT --dapr-http-port $DAPR_HTTP_PORT node app.js 
 ```
-The logging for this application should show that the messages published earlier by *frontapp* are now consumed, and the statestore is updated. Note: this implementation is not entirely safe because multiple instances of the handler function, each working to process a different message, could end up in *race conditions* where one instance reads the value under a key from the state store, increases it and saves it. However, a second instance could have read the value right after or just before and do its own increment and save action. After both are done, the name occurrence count may be increased by one instead of two. For the purpose of this lab, we accept this possibility.    
+The logging for this application should show that the messages published earlier by *frontapp* are now consumed, and the statestore is updated. 
+
+Here is the situation in a picture:
+![](images/front-app-pub-and-nameprocessor-sub.png)
+
+Note: this implementation is not entirely safe because multiple instances of the handler function, each working to process a different message, could end up in *race conditions* where one instance reads the value under a key from the state store, increases it and saves it. However, a second instance could have read the value right after or just before and do its own increment and save action. After both are done, the name occurrence count may be increased by one instead of two. For the purpose of this lab, we accept this possibility.    
 
 Make a number of calls that will be handled by the front-app:
 ```
@@ -568,6 +582,8 @@ Stop both the frontapp and the name-processor applications.
 
 Start both applications - with the added components-path parameter. This parameter tells Dapr to initialize components as defined by all the yaml files in the indicated directory (in this case the current directory). That is why you had to copy the pubsub.yaml file as well to the current directory, even though it is not changed. If you would not, it is not found by Dapr and call attempts to publish messages to topics on *pubsub* or subscribe to such topics will fail.
 
+![](images/pubsub-and-global-state.png)
+
 In one terminal, start the *greeter* application:
 ```
 export APP_PORT=6030
@@ -593,6 +609,8 @@ At this point, the front-app should get the increased occurrence count from the 
 
 ## Telemetry, Traces and Dependencies
 Open the URL [localhost:9411/](http://localhost:9411/) in your browser. This opens Zipkin, the telemetry collector shipped with Dapr.io. It provides insight in the traces collected from interactions between Daprized applications and via Dapr sidecars. This helps us understand which interactions have taken place, how long each leg of an end-to-end flow has lasted, where things went wrong and what the nature was of each interaction. And it also helps learn about indirect interactions.
+
+![](images/zipkin-telemetery-collection.png)
 
 Query Zipkin for traces. You should find traces that start at *greeter* and also include *name-processor*. You now that we have removed the dependency from *greeter* on *name-processor* by having the information flow via the pubsub component. How does Zipkin know that greeter and name-processor are connected? Of course this is based on information provided by Dapr. Every call made by Dapr Sidecars includes a special header that identifies a trace or conversation. This header is added to messages published to a pubsub component and when a Dapr sidecar consumes such a message, it reads the header value and reports to Zipkin that it has processed a message on behalf of its application and it includes the header in that report. Because Zipkin already received that header when the Dapr sidecar that published the message (on behalf of the greeter application) reported its activity, Zipkin can construct the overall picture.
 
