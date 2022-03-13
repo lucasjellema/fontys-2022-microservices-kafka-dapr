@@ -42,7 +42,7 @@ In these steps, you run a Dapr Sidecar (the technical term for the personal assi
 
 When you check the logs after executing the first command, you will see messages indicating that the sidecar (again, the technical term for the personal assstant) is running. Because we did not explicitly configure components for state store and pub sub, the default implementations in Dapr are used - based on Redis and leveraging the Docker Container running the Redis image.
 
-After completing the steps in this document, execute the following command:
+After completing the steps in that document, execute the following command:
 ```
 curl -X POST -H "Content-Type: application/json" -d '[{ "key": "name", "value": "Your Own Name"}]' http://localhost:3500/v1.0/state/statestore
 ```
@@ -58,7 +58,7 @@ To run a MySQL Database
 docker run --name dapr-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:latest
 ```
 
-To connect to the MySQL server:
+To connect to the MySQL server from the MySQL client application from inside the container running MySQL:
 ```
 docker exec -it dapr-mysql mysql -uroot -p
 ```
@@ -95,16 +95,16 @@ dapr run --app-id myotherapp --dapr-http-port 3510 --components-path .
 ```
 Note: if the current directory contains other yaml-files you may see unexpected and unintended effects as Dapr tries to interpret them as well.
 
-This instruction starts a Dapr sidecar (a personal assistant) and instructing the sidecar to know about a state store called *durable-statestore*. This statestore is backed by a MySQL Database for which the connection details are provided. Now when anyone asks this sidecar to save state and specifies the *durable-statestore* as the state store to use for that request, it will know where to go and it because of the many built in building blocks in Dapr it also knows what to do in order to talk state affairs with MySQL.
+This instruction starts a Dapr sidecar (a personal assistant) and instructs the sidecar about a state store called *durable-statestore*. This statestore is backed by a MySQL Database for which the connection details are provided. Now when anyone asks this sidecar to save state and specifies the *durable-statestore* as the state store to use for that request, the Dapr sidecar will know where to go and because of the many built in building blocks in Dapr it also knows what to do in order to talk state affairs with MySQL.
 
-You will find lines like these ones in the logging produced by Dapr when startingup:
+You will find lines like these ones in the logging produced by Dapr when starting up:
 ```
 INFO[0000] Creating MySql schema 'dapr_state_store'      app_id=myotherapp instance=DESKTOP-NIQR4P9 scope=dapr.contrib type=log ver=edge
 INFO[0000] Creating MySql state table 'state'            app_id=myotherapp instance=DESKTOP-NIQR4P9 scope=dapr.contrib type=log ver=edge
 INFO[0000] component loaded. name: durable-statestore, type: state.mysql/v1  app_id=myotherapp instance=DESKTOP-NIQR4P9 scope=dapr.runtime type=log ver=edge
 ```
 
-This confirms that Dapr initialized communications with the MySQL instancem, it also created the default schema and default table in it for storing state.
+This confirms that Dapr initialized communications with the MySQL instance, it also created the default schema and default table in it for storing state.
 
 Let us now create some state, in exactly the same way as we created state before - when it was saved in Redis Cache.
 
@@ -171,6 +171,7 @@ The default installation of Dapr comes with Zipkin, running in its own container
 Open [localhost:9411/](http://localhost:9411/) in your browser to bring up the Zipkin user interface. Click on the *Run Query* button (in the *Find a Trace* tab). A list is presented of the traces collected by Zipkin. Among them should be calls to *myapp* and *myotherapp*. Click on the *Show* button for one of the traces to see what additional information Zipkin offers. You will find details about the HTTP request and response. Click
 
 You will find that as we add real applications that receive requests through their sidecars and that leverage Dapr's services, the value of the telemetry quickly increases. To get this information without any additional effort in either development or configuration is a big boon. 
+
 ## Closure
 
 To complete this lab, you can now stop dapr: `dapr stop`. You can also stop the MySQL container:
