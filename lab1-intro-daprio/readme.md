@@ -34,6 +34,7 @@ Follow the instructions for initializing the Dapr environment that are provided 
 
 At this point, you have a virtual pool of personal assistants to draw support from for each of the applications and microservices you will run. These potential assistants when called into action can make use of the standard Dapr facilities for state management and pub/sub and for collecting telemetry and routing requests. We can easily add - and will so later in this lab - additional capabilities that these PAs can make use of.  
 
+![](images/standalone-dapr-setup.png)
 ## 2. Playing with Dapr State Store capability
 
 Follow the instructions for trying out the default Dapr state store implementation (based on Redis cache) as described in this document [Making the Dapr PA hold and return state ](https://docs.dapr.io/getting-started/get-started-api/). 
@@ -68,7 +69,7 @@ You can list the databases:
 ```
 show databases;
 ```
-Create a database and then create tables.
+and create a database and then create tables if you want to.
 
 However, let's not do that right now. Let's configure Dapr to use this MySQL instance to create a database and table to store state in.
 
@@ -96,6 +97,9 @@ dapr run --app-id myotherapp --dapr-http-port 3510 --components-path .
 Note: if the current directory contains other yaml-files you may see unexpected and unintended effects as Dapr tries to interpret them as well.
 
 This instruction starts a Dapr sidecar (a personal assistant) and instructs the sidecar about a state store called *durable-statestore*. This statestore is backed by a MySQL Database for which the connection details are provided. Now when anyone asks this sidecar to save state and specifies the *durable-statestore* as the state store to use for that request, the Dapr sidecar will know where to go and because of the many built in building blocks in Dapr it also knows what to do in order to talk state affairs with MySQL.
+
+This is what your environment looks like at this point:
+![](images/mysql-statestore.png)
 
 You will find lines like these ones in the logging produced by Dapr when starting up:
 ```
