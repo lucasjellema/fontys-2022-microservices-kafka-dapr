@@ -7,7 +7,7 @@ const daprPort = process.env.DAPR_HTTP_PORT ;
 const serverHost = "127.0.0.1";
 const serverPort = process.env.APP_PORT ; 
 const PUBSUB_NAME = "pubsub"
-const TOPIC_NAME  = "names"
+const TOPIC_NAME  = "orders"
 
 start().catch((e) => {
     console.error(e);

@@ -20,7 +20,7 @@ const server = http.createServer( async (req, res) => {
         // return the HTTP response; use the value of the name parameter if it was provided, or use World if it was not
         res.setHeader('Content-Type', 'text/html');
         let key = query.name ? query.name : "World"
-        keyOccurrenceCount = await retrieveIncrementSave(key);
+        let keyOccurrenceCount = await retrieveIncrementSave(key);
         res.end(`Hello ${key} from Application Instance ${app_instance_id} - greeting #${keyOccurrenceCount}`)
     }
 })
