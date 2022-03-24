@@ -1,0 +1,16 @@
+{
+  "name": "crm-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "neat-csv": "^5.2.0",
+    "node-rdkafka": "^2.10.1"
+  }
+}

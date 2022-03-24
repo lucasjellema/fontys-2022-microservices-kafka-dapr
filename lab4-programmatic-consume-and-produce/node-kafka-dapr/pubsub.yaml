@@ -1,0 +1,19 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: fontys2022
+  namespace: default
+spec:
+  type: pubsub.kafka
+  version: v1
+  metadata:
+  - name: brokers # Required. Kafka broker connection setting
+    value: "rocket-01.srvs.cloudkafka.com:9094,rocket-02.srvs.cloudkafka.com:9094,rocket-03.srvs.cloudkafka.com:9094"
+  - name: authType # Required.
+    value: "none"
+  - name: authRequired
+    value: "true"
+  - name: saslUsername # Required if authType is `password`.
+    value: "xa1ds2jz"
+  - name: saslPassword # Required if authType is `password`.
+    value: "ZoEVTK7_b50L3IvtjuosICGRpurA56TY"

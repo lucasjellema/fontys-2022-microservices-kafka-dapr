@@ -1,0 +1,43 @@
+
+
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  # For a complete reference of Vagrant configuration options, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://atlas.hashicorp.com/search.
+  config.vm.define "ubuntu16_docker", primary: true do |ubuntu16_docker|
+        # I have not used the bionic64 box for Ubuntu 18.04 because the Docker provisioning seemed not to work with it
+        ubuntu16_docker.vm.box = "ubuntu/xenial64"
+        ubuntu16_docker.vm.hostname = "fontys-kafka-workshop"
+        # access a port on your host machine (via localhost) and have all data forwarded to a port on the guest machine.
+        ubuntu16_docker.vm.network :forwarded_port, guest: 9092, host: 9092
+        # Create a private network, which allows host-only access to the machine
+        # using a specific IP. NOTE: YOU CAN CHANGE THIS IP ADDRESS TO SOME OTHER VALUE IN THE LOCAL RANGE 
+        ubuntu16_docker.vm.network "private_network", ip: "192.168.188.110"
+  end
+
+  #define a larger than default (10GB) disksize
+  config.disksize.size = '25GB'
+  
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = 'fontys-docker-compose-vm'
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+    # depending on how much RAM your physical host machine has, you may need to adjust this memory setting
+    vb.customize ["modifyvm"     , :id, "--memory", "8192"]
+    vb.customize ["modifyvm"     , :id, "--name"  , "Apache Kafka Workshop v1 - April 2020"]
+    vb.customize ["modifyvm"     , :id, "--cpus"  , 6]
+	  vb.customize ["modifyvm"     , :id, "--clipboard","bidirectional"]
+	  vb.customize ["modifyvm"     , :id, "--vram","16"]
+  end
+
+  # set up Docker in the new VM:
+  config.vm.provision :docker
+  # install Docker Compose into the VM
+  config.vm.provision :docker_compose
+	
+end
