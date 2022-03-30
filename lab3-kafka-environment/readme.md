@@ -105,7 +105,7 @@ When all images have been pulled and Docker Compose indicates that alle configur
 You should now see a list of six new containers running successfully.  
 
 In a browser on the host machine, you can access the Apache HQ GUI to verify success:
-http://192.168.188.110:28042/ (or http://127.0.0.1:28042/ or even http://localhost:28042/)
+http://192.168.188.110:28042/ (in case you run with the Vagrant defined VirtualBox VM) or http://127.0.0.1:28042/ or http://localhost:28042/ if you run outside the VM. 
 
 This URL is composed from the IP of the (VM that contains the) Docker Host and the port to which the AKHQ container port 8080 has been mapped in the *docker-compose.yml* file.
 
@@ -126,7 +126,7 @@ If you want to not only stop but also remove all containers that docker-compose 
 When you run `docker-compose up` again, all containers will be recreated an started. This time this will happen much faster than the first time because all container images have already been pulled to your local Docker environment.
 
 ## Node Runtime
-Some of the labs will use Node (JS) applications that will consume from and produce to Kafka Topics. These applications are used to demonstrate asynchronous interaction between microservices and an implementation of the CQRS pattern. To run these applications, you need to have a local Node Runtime environment.
+Some of the labs will use Node (JS) applications that will consume from and produce to Kafka Topics. These applications are used to demonstrate asynchronous interaction between microservices and an implementation of the CQRS pattern. To run these applications, you need to have a local Node Runtime environment. If you did not already install Node for the labs last week, then here is another chance. If you did already install, you can skip this section.
 
 You can create the Node runtime in the same machine that runs Docker (Compose), or on a different host - as long as the Kafka Cluster is accessible.
 
@@ -147,6 +147,7 @@ Also run:
 on the commandline to verify whether *npm* is installed successully. This should return the version label for the installed version of *npm*.
 
 ## Setting up Dapr.io
+We will use Dapr.io in this lab. If you did not already install Dapr for the labs last week, then here is another chance. If you did already install, you can skip this section.
 
 Dapr.io runs very well on Kubernetes. However, for simplicity sake we will go for the more straightforward approach. You will need an environment - MacOS, Windows, Linux - that has Docker running.  
 
