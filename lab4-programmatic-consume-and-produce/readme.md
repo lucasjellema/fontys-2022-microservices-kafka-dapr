@@ -152,9 +152,30 @@ dapr run --app-id orderprocessing --app-port $APP_PORT --dapr-http-port $DAPR_HT
 ```
 The publisher application is started and publishes all it has to say - to its Dapr Sidecar. This loyal assistant publishes the messages onwards, to what we know is the Apache Kafka pub/sub implementation.
 
+When you check the messages in the AKHQ UI or using the Kafka command line you will see that they contain more data than our application put into them. The Dapr Sidecar decorates our application's payload with quite a bit of metadata, as you can see in this sample. The message that the application published in this case is found as the *data* property in the JSON message payload:
+
+```
+{
+  "source": "orderprocessing",
+  "type": "com.dapr.event.sent",
+  "topic": "orders",
+  "traceid": "00-1d8361f5392c720651aa10727694d255-93a147f099702644-01",
+  "tracestate": "",
+  "data": 737,
+  "id": "02b95dbf-449c-4857-aa68-fe36a7a17333",
+  "specversion": "1.0",
+  "datacontenttype": "application/json",
+  "pubsubname": "pubsub"
+}
+```
+Other information is used by Dapr to provide telemetry tracing and routing information (for example reported through Zipkin), to cater for middleware such as authorization and advanced routing.  
+
+When we consume the message through a Dapr sidecar, all we get is the payload itself. 
 
 ### Resources
 Check [Detailed documentation on the Dapr.io Apache Kafka pubsub component](https://docs.dapr.io/reference/components-reference/supported-pubsub/setup-apache-kafka/).
+
+A second way to use Apache Kafka through Dapr is with the Binding component: [Docs on Dapr Apache Kafka input and output binding component](https://docs.dapr.io/reference/components-reference/supported-bindings/kafka/).
 
 
 ## Bonus: Node Web Application
