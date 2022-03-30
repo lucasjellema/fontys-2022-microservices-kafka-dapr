@@ -1,6 +1,6 @@
 # Getting started with Apache Kafka
 
-In this first lab, you will have your first look and feel around Apache Kafka, using the environment that you have prepared prior to the workshop using [the instructions on the environment](../environment/readme.md).
+In this lab, you will have your first look and feel around Apache Kafka, using the environment that you have prepared prior to the workshop using [the instructions on the environment](../lab3-kafka-environment/readme.md).
 
 The main units of interest in Kafka are topics and messages. A topic is simply what you publish a message to, topics are a stream of messages.
 

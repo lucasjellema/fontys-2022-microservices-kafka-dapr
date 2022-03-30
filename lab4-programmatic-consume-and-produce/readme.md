@@ -2,7 +2,7 @@
 
 TABLE OF CONTENTS
 
-In the previous lab, you have produced and consumed messages manually, using Kafka Console and the Apache Kafka HQ GUI. In this lab, you will also produce and consume messages - this time in a programmatic way. You will use the Apache Kafka platform that you have prepared prior to the workshop using [the instructions on the environment](../environment/readme.md) as well as the Node run time environment.
+In the previous lab, you have produced and consumed messages manually, using Kafka Console and the Apache Kafka HQ GUI. In this lab, you will also produce and consume messages - this time in a programmatic way. You will use the Apache Kafka platform that you have prepared prior to the workshop using [the instructions on the environment](../lab3-kafka-environment/readme.md). as well as the Node run time environment.
 
 You will interact with Kafka from Node in the pure form with one of the most popular libraries for using Kafka from Node applications. Next, you will take the lab around pub/sub based interaction you did earlier with Node and Dapr.io. Last time you did this lab, you used the Redis based Pub/Sub implementation shipped with Dapr. Now you are using the exact same code - and a slightly different configuration. This configuration replaces Redis with your local (or cloud based) Apache Kafka Cluster. To prove:
 * how your Node application is technology independent because of Dapr.io
@@ -13,7 +13,7 @@ You will interact with Kafka from Node in the pure form with one of the most pop
 
 The NPM module repository returns over 660 modules when searched for the keyword *kafka*. Not all of them are libraries to facilitate the interaction from your Node application with Apache Kafka clusters - but over a dozen are. In this lab, we will work with the *node-rdkafka* NPM module, [node-rdkafka on GitHub](https://github.com/Blizzard/node-rdkafka) for details on this particular library and [Reference Docs](https://blizzard.github.io/node-rdkafka/current/) for the API specification. The node-rdkafka library is a high-performance NodeJS client for Apache Kafka that wraps the native (C based) *librdkafka* library. All the complexity of balancing writes across partitions and managing (possibly ever-changing) brokers should be encapsulated in the library.
 
-The sources for this part of the lab are in the directory *node-kafka-client* in the lab2 directory in the Git repo.
+The sources for this part of the lab are in the directory *node-kafka-client* in the lab directory in the Git repo.
 
 ### Producing to test-topic in Node
 
