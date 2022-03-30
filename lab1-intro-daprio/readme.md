@@ -178,7 +178,7 @@ You will find that as we add real applications that receive requests through the
 
 ## Closure
 
-To complete this lab, you can now stop dapr: `dapr stop`. You can also stop the MySQL container:
+To complete this lab, you can now stop dapr: `dapr stop myapp`and `dapr stop myotherapp`. You can also stop the MySQL container:
 
 ```
 docker stop dapr-mysql
